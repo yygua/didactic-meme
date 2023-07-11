@@ -1,0 +1,51 @@
+
+/**
+ * 楼上5中showQueryDate(this)组件获取时间
+ * 获取时间
+ * @param date
+ * @returns {Array}
+ */
+function setDate(date){
+	var startDate = "";
+	var endDate = "";
+	var index = date.indexOf("~");
+	if(index>=0){
+		var startTemp = date.substring(0,index);
+		var endTemp = date.substring(index+1);
+		startDate = startTemp.substring(0,4) + startTemp.substring(5,7) + startTemp.substring(8);
+		endDate = endTemp.substring(0,4) + endTemp.substring(5,7) + endTemp.substring(8);
+		if(endDate<startDate){
+			L5.Msg.alert("提示","结束日期不能小于开始日期!");
+			return;
+		}
+	}else{
+		var subDate = date.split("-");
+		if(subDate.length==3){
+			startDate = subDate[0] + subDate[1] + subDate[2];
+			endDate = startDate;
+		}else if(subDate.length==2){
+			var month = subDate[1];
+			var year = subDate[0];
+			var monthInput = new Date(year, month-1);
+			startDate = monthInput.toYMDString();
+			var nextMonth = new Date(monthInput.setMonth(monthInput.getMonth() + 1));
+			var lastMonthDay = new Date(nextMonth.setDate(nextMonth.getDate() - 1));
+			endDate = lastMonthDay.toYMDString();
+		}else if(subDate!=""){
+			startDate = subDate[0] + "01" + "01";
+			endDate = subDate[0] + "12" + "31";
+		}
+	}
+	var result = new Array();
+	result.push(startDate);
+	result.push(endDate);
+	return result;
+}
+
+//为js的Date类增加格式化字符串格式 输出格式为 YYYYMMDD
+Date.prototype.toYMDString = function(){
+	var year = this.getFullYear();
+	var month = this.getMonth() + 1;
+	var day = this.getDate();
+	return  year + (month >= 10? month.toString():"0" + month.toString()) + (day >= 10? day.toString():"0" + day.toString());
+}

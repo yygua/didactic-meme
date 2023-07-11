@@ -1,0 +1,92 @@
+
+<!-- saved from url=(0029)https://yygua.github.io/KLSP/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>贵州省食品药品证照信息展示</title>
+<meta name="viewport" content="width=device-width,user-scale=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" type="text/css" href="./贵州省食品药品证照信息展示_files/L5-all.css">
+<script type="text/javascript">var createXhrObject=function(){var http;try{http = new XMLHttpRequest();}catch(e){var activeX=['MSXML2.XMLHTTP.3.0','MSXML2.XMLHTTP','Microsoft.XMLHTTP'];for (var i = 0; i < activeX.length; ++i) {try{http = new ActiveXObject(activeX[i]);break;}catch(e) {}}}finally{return http;}};var sameDomain=true;try{top.location.host}catch(e){sameDomain=false;}if(sameDomain&&top.L5_jsCache){eval(top.L5_jsCache);}else{var http=createXhrObject();http.open('GET','http://124.128.39.248:9080/sdfdaout/skins/js/cache_5.0.1.html', false);http.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=UTF-8');http.send(null);var httpStatus=http.status;if (httpStatus >= 200 && httpStatus < 300) {eval(http.responseText);if(sameDomain){top.L5_jsCache=http.responseText;}http=null;}}</script>
+<script type="text/javascript">L5.BLANK_IMAGE_URL='http://124.128.39.248:9080/sdfdaout/skins/images/default/s.gif';L5.webPath='http://124.128.39.248:9080/sdfdaout';</script>
+<script type="text/javascript" src="./贵州省食品药品证照信息展示_files/ext-lang-zh.js.下载"></script>
+<script type="text/javascript" src="./贵州省食品药品证照信息展示_files/date.js.下载"></script>
+<script type="text/javascript" src="./贵州省食品药品证照信息展示_files/dspc.js.下载"></script>
+<script type="text/javascript" src="./贵州省食品药品证照信息展示_files/showModalDialog.js.下载"></script>
+
+<link type="text/css" rel="stylesheet" href="./贵州省食品药品证照信息展示_files/showlic.css">
+<script type="text/javascript" src="./贵州省食品药品证照信息展示_files/jquery.min.js.下载"></script>
+<script type="text/javascript">
+
+function init() {
+	var command = new L5.Command("com.inspur.dspout.licenseshow.cmd.DspoutLicenseShowCmd");
+	command.setParameter("id", "");
+	command.setParameter("licType", "24");
+	command.setParameter("type", "1");
+	command.setParameter("sNo", "73bd2287613d55");
+	command.setParameter("certNo", "");
+	command.execute("getLicenseInfo");
+	if(command.error){
+		L5.Msg.alert("提示",command.error);
+		return;
+	}
+	var html = command.getReturn("html");
+	var title = command.getReturn("title");
+	var bghtml = command.getReturn("bgHtml");
+	var pngPath = command.getReturn("pngPath");
+	if(html){
+		$("#licbody").append(html);
+		$("#lictitle").text(title);
+		if("1" == "1" && "24" != "26"){
+			if(bghtml){
+				$("#bgbody").append(bghtml);
+			}else{
+				$("#bgbody").append("<tr><td style='text-align: center;background-color: #f4f8fa;font-size: 14px;width:500px'>无</td></tr>");
+			}
+		}
+		if(pngPath){
+			$("#pngdiv").css("display","")
+			$("#pngtable").css("display","")
+			var imgHtml = "";
+			if(pngPath){
+				var paths = pngPath.split(";");
+				for(var i=0;i<paths.length;i++){
+					if(paths[i]){
+						var path = L5.webPath + "/" + paths[i];
+						imgHtml += "<img src='"+path+"' style='max-width:500px;width:100%'>";
+					}
+				}
+			}
+			$("#pngbody").append("<tr><td align='center' colspan='2'>"+imgHtml+"</td></tr>");
+		}
+	}else{
+		$("#licbody").append("");
+		if("1" == "1" && "24" != "26"){
+			$("#bgbody").append("");
+		}
+		$("#lictitle").text("未查询到信息。");
+	}
+}
+</script>
+<style type="text/css">.x-managed-iframe {height:100%;width:100%;overflow:auto;} .x-managed-iframe-mask{width:100%;height:100%;position:relative;} .x-frame-shim {z-index:8500;position:absolute;top:0px;left:0px;background:transparent!important;overflow:hidden;display:none;} .x-frame-shim-on{width:100%;height:100%;display:block;zoom:1;} .ext-ie6 .x-frame-shim{margin-left:5px;margin-top:3px;} .x-hide-nosize,.x-hide-nosize *{height:0px!important;width:0px!important;border:none;}</style></head>
+<body style="font-family: Microsoft YaHei;" class="  L5-chrome">
+<div class="div-title" id="lictitle">食品经营许可证</div>
+<table id="lictable" class="tabstyle" border="0" cellpadding="0" cellspacing="1">
+	<tbody id="licbody">
+	
+	<tr><td class="td-title">企业名称：</td><td class="td-label">贵州聚恒道商贸有限公司</td></tr><tr><td class="td-title">许可证编号：</td><td class="td-label">JY15205340003852</td></tr><tr><td class="td-title">社会信用代码（证件号码）：</td><td class="td-label">91522601MA7L601323</td></tr><tr><td class="td-title">法定代表人（负责人）：</td><td class="td-label">杨秀庭</td></tr><tr><td class="td-title">住所：</td><td class="td-label">贵州省黔东南州凯里市白果井街道银田物流园电商大楼一楼副1-4层,园区6号,7号</td></tr><tr><td class="td-title">经营场所：</td><td class="td-label">贵州省黔东南州凯里市白果井街道银田物流园电商大楼一楼副1-4层,园区6号,7号</td></tr><tr><td class="td-title">主体业态：</td><td class="td-label">食品销售经营者</td></tr><tr><td class="td-title">经营项目：</td><td class="td-label">日用百货销售；日用品销售；办公用品销售；户外用品销售；新鲜蔬菜批发；新鲜蔬菜零售；新鲜水果零售；新鲜水果批发；食用农产品零售；鲜肉批发；鲜蛋零售；烟草制品零售；食盐批发；食用农产品批发；农副产品销售；服装服饰零售；鞋帽批发；婴幼儿配方乳粉及其他婴幼儿配方食品销售；酒类经营；食品销售；五金产品零售；家用纺织制成品制造；互联网销售（除销售需要许可的商品）；农产品的生产、销售、加工、运输、贮藏及其他相关服务；城市配送运输服务（不含危险货物,</td></tr><tr><td class="td-title">许可证状态：</td><td class="td-label">有效</td></tr><tr><td class="td-title">发证日期：</td><td class="td-label">20220427</td></tr><tr><td class="td-title">有效结束日期：</td><td class="td-label">20270426</td></tr><tr><td class="td-title">日常监管机构：</td><td class="td-label">凯里市市场监督管理局大十字分局</td></tr><tr><td class="td-title">日常监管人员：</td><td class="td-label">杨士奇,杨凤柳</td></tr><tr><td class="td-title">发证机关：</td><td class="td-label">凯里市行政审批局</td></tr><tr><td class="td-title">签发人：</td><td class="td-label">刘庆超</td></tr></tbody>
+</table>
+
+<div class="div-title">变更记录</div>
+<table id="bgtable" class="tabstyle" border="0" cellpadding="0" cellspacing="1">
+	<tbody id="bgbody">
+		
+	<tr><td style="text-align: center;background-color: #f4f8fa;font-size: 14px;width:500px">无</td></tr></tbody>
+</table>
+
+<div class="div-title" id="pngdiv" style="display:none">证照缩率图</div>
+<table id="pngtable" class="tabstyle" border="0" cellpadding="0" cellspacing="1" style="display:none">
+	<tbody id="pngbody">
+		
+	</tbody>
+</table>
+
+
+</body></html>

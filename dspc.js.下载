@@ -1,0 +1,287 @@
+/**
+ * dspc公共JavaScript函数定义文件
+ * 函数名称规范：dspcXxxxEvent()
+ * @author zhaowl
+ * @since 2013-8-24 下午01:56:29 
+ */
+
+var $ = function(id){
+	if(typeof(id) == "object"){
+		return id;
+	} else if (document.getElementById){
+		return document.getElementById(id);
+	} else if (document.all){
+		return document.all[id];
+	} else if (document.layers){
+		return document.layers[id];
+	}
+}
+
+/**
+ * 给目标url添加当前url参数的函数
+ * @param url 目标url
+ * @returns 添加当前url参数的目标url 
+ */
+function dspcAddUrlData(url){
+ 	var data = location.href.split("?")[1];
+ 	if(!data){
+ 		return url;
+ 	}
+ 	
+ 	if(url.indexOf("?") == -1){
+ 		return url + "?" + data;
+ 	}
+ 	
+	if(url.lastIndexOf("?") == url.length-1 || url.lastIndexOf("&") == url.length-1){
+		return url + data;
+	}else{
+		return url + "&" + data;
+	}
+};
+/**
+ * 取消函数
+ * 功能：返回用户前一个页面
+ */
+function dspcUndoEvent() {
+	window.history.go(-1);
+}
+
+/**
+ * 打开弹出窗口
+ * 参考window.open()函数
+ * @param url 网页的地址，绝对地址
+ * @param title 网页名称，可为空
+ * @param iWidth 弹出窗口的宽度
+ * @param iHeight 弹出窗口的高度
+ */
+function dspcOpenWindow(url, title, iWidth, iHeight){
+	if (url){
+		return false;
+    }
+	
+	if (!iWidth || iWidth <= 0) {
+		iWidth = window.screen.availWidth;
+	}
+	if (!iHeight || iHeight <= 0) {
+		iHeight = window.screen.availHeight;
+	}
+	
+	//获得窗口的水平位置
+	var iLeft = (window.screen.availWidth-iWidth)/2;
+	if (iLeft < 0) {
+		iLeft = 0;
+	}
+	//获得窗口的垂直位置
+	var iTop = (window.screen.availHeight-iHeight)/2;
+	if (iTop < 0) {
+		iTop = 0;
+	}
+	var args = 'width='+iWidth+',height='+iHeight+',top='+iTop+',left='+iLeft+',scrollbars=yes,resizeable=yes';
+	window.open(url, title, args);
+}
+
+/**
+ * 设置下拉框选项的title属性
+ * 功能：下拉框长度固定，选项内容超长显示不出全部文字，鼠标悬浮提示完整内容
+ */
+function dspcInitOptionTagTitleEvent(){
+    var selectTags = document.getElementsByTagName("select");
+    //alert("debug: selectTags.length=" + selectTags.length);
+    
+    if (selectTags.length > 0){
+        for (var i = 0; i < selectTags.length; i++){
+            var options = selectTags[i].options;
+            //alert("debug: options.length=" + options.length);
+            
+            for (var j = 0; j < options.length; j++){
+            	//alert("debug: text = " + options[j].text);
+                if (options[j].title) {
+                    options[j].title = options[j].text;
+                } else {
+                	options[j].setAttribute("title",  options[j].text);
+                }
+            }
+        }
+    }
+}
+/**
+ * 设置下拉框选项的title属性
+ * @param id
+ */
+function dspcInitOptionTagTitleByIdEvent(id){
+	var selectTag = document.getElementById(id);
+	if (!selectTag || !selectTag.options) {
+		return;
+	}
+	
+	var options = selectTag.options;
+    for (var j = 0; j < options.length; j++){
+        if (options[j].title) {
+            options[j].title = options[j].text;
+        } else {
+        	options[j].setAttribute("title",  options[j].text);
+        }
+    }
+}
+/*
+ * 校验后，定位到第一个校验不通过的元素 参数：firstFalseEle：第一个校验不通过的元素 使用说明：
+ * 1、执行Dataset.isValidate()方法,执行校验 2、执行var
+ * firstFalseEle=L5.databind.getFirstFalseDom()方法,获取第一个校验不通过的元素
+ * 3、执行focusFirstWrongDom(firstFalseEle)方法,进行定位(解决了跨tab页定位的问题)
+ */
+function dspcFocusFirstWrongDom(firstFalseEle){
+	if(firstFalseEle!==null){
+		var tablePanel = L5.get(firstFalseEle).findParent('.l-tab-panel');// 找到firstFalseEle所在的tabPanel
+		if(tablePanel){
+			firstFalseEle.setAttribute("isThis","yes");// 给firstFalseEle增加属性：isThis
+			var tp = L5.getCmp(tablePanel.id);// 定位到tabPanel
+			var items = tp.items.items;// 获取tabPanel的所有tab页
+			// 遍历tab页,在每个tab页中查找属性isThis='yes'的Dom元素,如果可以找到,则定位到该tab页,并移除isThis='yes'的属性
+			for(var i=0;i<items.length;i++){
+				var list = L5.DomQuery.select("*[@isThis='yes']", items[i].getEl().dom);
+				if(list.length>0){
+					tp.setActiveTab(i);
+					break;
+				}
+			}
+			firstFalseEle.removeAttribute("isThis");// 移除isThis='yes'的属性
+		}
+		if(firstFalseEle.type!=undefined&&(firstFalseEle.type=="radio"||firstFalseEle.type=="checkbox")){
+			while(firstFalseEle.parentElement!=null&&firstFalseEle.nodeName.toUpperCase()!="TD"){
+				firstFalseEle= firstFalseEle.parentElement;
+			} 
+		} 
+		L5.get(firstFalseEle).focus();// 定位到firstFalseEle元素
+	}
+}
+
+/**
+ * 功能函数：判断字符串无效的函数
+ */
+function dspcIsValid(value){
+	if(typeof(value)==="undefined" || value===null || value.length===0){
+		return false;
+	}
+	return true;
+}
+
+/**
+ * 功能函数：判断中文字符的函数
+ */
+function dspcIsChinese(str){
+   var regx = /[\u0391-\uFFE5]/;      
+   return regx.test(str);     
+}
+
+/**
+ * 功能函数：求字符串的字符长度函数
+ * 中文：2个字符长度，其他字符：1个字符长度
+ */
+function dspcLengthOf(str){
+	var length=0;
+	for (i=0;i<str.length;i++){
+		if (dspcIsChinese(str.charAt(i))){
+			length += 2;
+		}else{
+			length += 1;
+		}
+	}
+	return length;
+}
+/**
+ * 获取url参数Map集合
+ * 
+ * @returns {DspMap}
+ */
+function dspcGetDocumentUrlData() {
+	var map = new DspMap();
+	var url = decodeURIComponent(document.URL);
+	var parameters = url.split("?");
+
+	if (parameters.length > 1) {
+		var keyValues = parameters[1].split("&");
+		for (var i = 0; i < keyValues.length; i++) {
+			var keyValue = keyValues[i].split("=");
+			if (keyValue.length == 2) {
+				map.put(keyValue[0], keyValue[1])
+			}
+		}
+	}
+
+	return map;
+}
+/** 
+ * 
+ * @author wupl 
+ * @date 2013-9-24 
+ */
+function DspMap() {
+	this.javaClass =  "HashMap";// short name
+	this.map = new Object();
+	this.length = 0;
+	this.keys = new Array();
+
+	/** 
+	 * 放入一个键值对 
+	 * @param {String} key 
+	 * @param {Object} value 
+	 */
+	this.put = function(key, value) {
+		if (!(this.map[key] || this.map[key] == "")) {
+			this.keys.push(key);
+			this.length++;
+		}
+		this.map[key] = value;
+	};
+
+	/** 
+	 * 获取某键对应的值 
+	 * @param {String} key 
+	 * @return {Object} value 
+	 */
+	this.get = function(key) {
+		return this.map[key];
+	};
+
+	/** 
+	 * 删除一个键值对 
+	 * @param {String} key 
+	 */
+	this.remove = function(key) {
+		var ret = this.map[key];
+		if (ret || ret == "") {
+			for (var i = 0;i < this.keys.length;i++) {
+				if (this.keys[i] == key) {
+					this.keys.splice(i,1);
+					break;
+				}
+			}
+			this.length--;
+		}
+		delete this.map[key];
+		return ret;
+	};
+
+
+	/** 
+	 * 获取键值对数量 
+	 */
+	this.size = function() {
+		return this.keys.length;
+	};
+
+	/** 
+	 * 重写toString 
+	 */
+	this.toString = function() {
+		var ret = "{";
+		var j = 0;
+		for ( var i in this.map) {
+			ret += "\"" + i.toString() + "\":\"" + (this.get(i)==null?"":this.get(i)).toString()+"\"";
+			if (j++ < this.size() - 1)
+				ret += ",";
+		}
+		ret += "}";
+		return ret;
+	};
+}

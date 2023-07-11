@@ -1,0 +1,131 @@
+//解决showModalDialog在chrome里无法使用的问题。
+//解决方法，将该js引入原本jsp页面即可。
+//注意事项，使用该方法时，showModalDialog方法及参数，请勿换行，否则无法正常关闭页面
+/**
+ * 正确：
+ * var win = showModalDialog(url, null, "scroll:yes;status:no;dialogWidth:500px;dialogHeight:600px");
+ * 
+ * 错误：
+ * var win = window.showModalDialog(url, null,
+			"scroll:yes;status:no;dialogWidth:500px;dialogHeight:600px");
+ */
+
+
+/**
+ * spawn yield :
+ * async await :IE无法解析关键字，js会报错，需要改的方法整个js需要动态加载（仅谷歌加载），加载放在原来的js后面覆盖原方法
+ * eval缺陷 :实际就是把一个方法里的代码分成前后两段执行，多层嵌套｛｛｛window.showModalDialog｝｝｝会出问题
+ * 暂时重写了window.close()，会导致正常window.close无法关闭窗口。
+ */
+(function() {
+    window.spawn = window.spawn || function(gen) {
+		function continuer(verb, arg) {
+			var result;
+			try {
+				result = generator[verb](arg);
+			} catch (err) {
+				return Promise.reject(err);
+			}
+			if (result.done) {
+				return result.value;
+			} else {
+				return Promise.resolve(result.value).then(onFulfilled, onRejected);
+			}
+		}
+		var generator = gen();
+		var onFulfilled = continuer.bind(continuer, 'next');
+		var onRejected = continuer.bind(continuer, 'throw');
+		return onFulfilled();
+	};
+    if (fn_isIE()) {
+
+	} else {
+        window.showModalDialog = function(url, arg, opt) {
+            url = url || ''; // URL of a dialog
+            arg = arg || null; //arguments to a dialog
+            opt = opt || 'dialogWidth:500px;dialogHeight:400px'; //options: dialogTop;dialogLeft;dialogWidth;dialogHeight or CSS styles
+            var caller = showModalDialog.caller.toString();
+            var dialog = document.body.appendChild(document.createElement('dialog'));
+            dialog.setAttribute('style', opt.replace(/dialog/gi, ''));
+            dialog.innerHTML = '<a href="#" id="dialog-close" style="position: absolute; top: 0; right: 4px; font-size: 20px; color: #000; text-decoration: none; outline: none;">&times;</a><iframe id="dialog-body" src="' + url + '" style="border: 0; width: 100%; height: 100%;"></iframe>';
+            document.getElementById('dialog-body').contentWindow.dialogArguments = arg;
+            document.getElementById('dialog-close').addEventListener('click', function(e) {
+                e.preventDefault();
+                dialog.close();
+            });
+            dialog.showModal();
+            //if using yield or async/await
+            if(caller.indexOf('yield') >= 0 || caller.indexOf('await') >= 0) {
+                return new Promise(function(resolve, reject) {
+                    dialog.addEventListener('close', function() {
+                        var returnValue = document.getElementById('dialog-body').contentWindow.returnValue;
+                        document.body.removeChild(dialog);
+                        resolve(returnValue);
+                    });
+                });
+            }
+            //if using eval
+            var isNext = false;
+            var nextStmts = caller.split('\n').filter(function(stmt) {
+                if(isNext || stmt.indexOf('showModalDialog(') >= 0)
+                    return isNext = true;
+                return false;
+            });
+            dialog.addEventListener('close', function() {
+                var returnValue = document.getElementById('dialog-body').contentWindow.returnValue;
+				document.body.removeChild(dialog);
+				if (returnValue) {
+					nextStmts[0] = nextStmts[0].replace(/(window\.)?showModalDialog\(.*\)/g, JSON.stringify(returnValue));
+					eval('function dialogTemp() {\n' + nextStmts.join('\n'));
+					eval('dialogTemp()');
+				}
+            });
+        };
+        
+
+        Window.L5ModalDialog=function (url, arg, opt, callback1, callback2) {
+            url = url || ''; //URL of a dialog
+            arg = arg || null; //arguments to a dialog
+            opt = opt || 'dialogWidth:300px;dialogHeight:200px'; //options: dialogTop;dialogLeft;dialogWidth;dialogHeight or CSS styles
+//            var caller = showModalDialog.caller.toString();
+            var dialog = document.body.appendChild(document.createElement('dialog'));
+            dialog.setAttribute('style', opt.replace(/dialog/gi, ''));
+            dialog.innerHTML = '<a href="#" id="dialog-close" style="position: absolute; top: 0; right: 4px; font-size: 20px; color: #000; text-decoration: none; outline: none;">&times;</a><iframe id="dialog-body" src="' + url + '" style="border: 0; width: 100%; height: 100%;"></iframe>';
+            document.getElementById('dialog-body').contentWindow.dialogArguments = arg;
+            document.getElementById('dialog-close').addEventListener('click', function(e) {
+                e.preventDefault();
+                dialog.close();
+            });
+            dialog.showModal();
+
+            dialog.addEventListener('close', function() {
+				var returnValue = document.getElementById('dialog-body').contentWindow.returnValue;
+				if (returnValue) {
+					callback1(returnValue);
+				} else {
+					callback2();
+				}
+				document.body.removeChild(dialog);
+			});
+        }
+
+        window.close = function () {
+            if (parent && parent.document.getElementsByTagName("dialog").length > 0) {
+                var length = parent.document.getElementsByTagName("dialog").length;
+                parent.document.getElementsByTagName("dialog")[length-1].close();
+            }
+        };
+    }
+})();
+
+
+//判断是否IE
+function fn_isIE() {
+	var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+	if (userAgent.indexOf("Opera") > -1 || userAgent.indexOf("Firefox") > -1
+			|| userAgent.indexOf("Chrome") > -1
+			|| userAgent.indexOf("Safari") > -1) {
+		return false;
+	}
+	return true;
+}
